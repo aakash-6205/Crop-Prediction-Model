@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Crop Prediction</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      /* Custom styles for the web app */
+
+      /* Set pastel green as the main theme color */
+      :root {
+        --main-theme-color: #7ed957; /* Pastel green */
+      }
+
+      /* Style the container */
+      .container {
+        max-width: 800px;
+        margin: 50px auto; /* Center horizontally and add top margin */
+        padding: 20px;
+        background-color: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      /* Style the heading */
+      h1 {
+        font-size: 3.5rem;
+        font-weight: bold;
+        text-align: center;
+        margin-bottom: 20px;
+        color: var(--main-theme-color); /* Use main theme color */
+      }
+
+      /* Style the select dropdown */
+      #prediction_type {
+        width: 100%;
+        padding: 10px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        outline: none;
+        transition: border-color 0.3s ease;
+      }
+
+      #prediction_type:focus {
+        border-color: var(
+          --main-theme-color
+        ); /* Use main theme color when focused */
+      }
+
+      /* Style the form sections */
+      .form-section {
+        margin-top: 20px;
+      }
+
+      /* Style the form heading */
+      .form-section h2 {
+        font-size: 1.8rem;
+        margin-bottom: 15px;
+        color: var(--main-theme-color); /* Use main theme color */
+      }
+
+      /* Style the form inputs */
+      input[type="text"],
+      select {
+        width: 100%;
+        padding: 10px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        outline: none;
+        transition: border-color 0.3s ease;
+        margin-bottom: 10px;
+      }
+
+      input[type="text"]:focus,
+      select:focus {
+        border-color: var(
+          --main-theme-color
+        ); /* Use main theme color when focused */
+      }
+
+      /* Style the submit button */
+      input[type="submit"] {
+        width: 100%;
+        padding: 12px;
+        border: none;
+        border-radius: 8px;
+        background-color: var(--main-theme-color); /* Use main theme color */
+        color: #ffffff;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+
+      input[type="submit"]:hover {
+        background-color: #98e16b; /* Lighten the color on hover */
+      }
+
+      /* Style the prediction result */
+      .prediction-result {
+        font-size: 1.5rem;
+        margin-top: 20px;
+        color: var(--main-theme-color); /* Use main theme color */
+      }
+    </style>
+
+    <script>
+      function showForm(selectedOption) {
+        var cropForm = document.getElementById("crop_form");
+        var yieldForm = document.getElementById("yield_form");
+
+        if (selectedOption === "predict_crop") {
+          cropForm.style.display = "block";
+          yieldForm.style.display = "none";
+        } else if (selectedOption === "predict_yield") {
+          cropForm.style.display = "none";
+          yieldForm.style.display = "block";
+        }
+      }
+    </script>
+  </head>
+  <body class="bg-gray-100">
+    <div class="container mx-auto py-8">
+      <h1 class="text-3xl text-center mb-8">Crop Prediction</h1>
+
+      <div class="max-w-md mx-auto">
+        <label for="prediction_type" class="block mb-2"
+          >Select Prediction Type:</label
+        >
+        <select
+          id="prediction_type"
+          onchange="showForm(this.value)"
+          class="block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+        >
+          <option value="">Select Prediction Type</option>
+          <option value="predict_crop">Predict Crop</option>
+          <option value="predict_yield">Predict Crop Yield (hg/ha)</option>
+        </select>
+      </div>
+
+      <div id="crop_form" style="display: none" class="mt-8">
+        <h2 class="text-2xl mb-4">Predict Crop</h2>
+        <form action="/predict_crop" method="post">
+          <!-- Form fields for predicting crop -->
+          <label for="year">Year</label>
+          <input type="text" id="year" name="year" /><br /><br />
+
+          <label for="hg/ha_yield">hg/ha_yield</label>
+          <input type="text" id="hg/ha_yield" name="hg/ha_yield" /><br /><br />
+
+          <label for="average_rainfall">Average Rainfall (mm per year):</label>
+          <input
+            type="text"
+            id="average_rainfall"
+            name="average_rainfall"
+          /><br /><br />
+
+          <label for="pesticides">Pesticides Usage (tonnes):</label>
+          <input type="text" id="pesticides" name="pesticides" /><br /><br />
+
+          <label for="avg_temp">Average Temperature (°C):</label>
+          <input type="text" id="avg_temp" name="avg_temp" /><br /><br />
+
+          <label for="Season">Season:</label><br>
+          <input type="radio" id="Kharif" name="Season" value="Kharif" checked>
+          <label for="Kharif">Kharif</label><br>
+          <input type="radio" id="Rabi" name="Season" value="Rabi">
+          <label for="Rabi">Rabi</label><br><br>
+
+          <input type="submit" value="Predict" />
+        </form>
+      </div>
+
+      <div id="yield_form" style="display: none" class="mt-8">
+        <h2 class="text-2xl mb-4">Predict Crop Yield</h2>
+        <form action="/predict_yield" method="post">
+          <!-- Form fields for predicting crop yield -->
+          <label for="year">Year</label>
+          <input type="text" id="year" name="year" /><br /><br />
+
+          <label for="average_rainfall">Average Rainfall (mm per year):</label>
+          <input
+            type="text"
+            id="average_rainfall"
+            name="average_rainfall"
+          /><br /><br />
+
+          <label for="pesticides">Pesticides Usage (tonnes):</label>
+          <input type="text" id="pesticides" name="pesticides" /><br /><br />
+
+          <label for="avg_temp">Average Temperature (°C):</label>
+          <input type="text" id="avg_temp" name="avg_temp" /><br /><br />
+
+          <input type="hidden" id="Cassava" name="Cassava" value="0" />
+          <input type="hidden" id="Maize" name="Maize" value="0" />
+          <input type="hidden" id="Potatoes" name="Potatoes" value="0" />
+          <input type="hidden" id="Rice_paddy" name="Rice_paddy" value="0" />
+          <input type="hidden" id="Sorghum" name="Sorghum" value="0" />
+          <input type="hidden" id="Soybeans" name="Soybeans" value="0" />
+          <input
+            type="hidden"
+            id="Sweet_potatoes"
+            name="Sweet_potatoes"
+            value="0"
+          />
+          <input type="hidden" id="Kharif" name="Kharif" value="0" />
+          <input type="hidden" id="Rabi" name="Rabi" value="0" />
+
+          <label for="item">Crop:</label>
+          <select id="item" name="item">
+            <option value="Cassava">Cassava</option>
+            <option value="Maize">Maize</option>
+            <option value="Potatoes">Potatoes</option>
+            <option value="Rice, paddy">Rice, paddy</option>
+            <option value="Sorghum">Sorghum</option>
+            <option value="Soybeans">Soybeans</option>
+            <option value="Sweet potatoes">Sweet potatoes</option>
+            <option value="Wheat">Wheat</option></select
+          ><br /><br />
+
+          <label for="Season">Season:</label>
+          <select id="Season" name="Season">
+            <option value="Kharif">Kharif</option>
+            <option value="Rabi">Rabi</option>
+          </select><br /><br />
+
+          <input type="submit" value="Predict" />
+        </form>
+      </div>
+
+      {% if prediction %}
+      <h2 class="text-2xl mt-8">Prediction: {{ prediction }}</h2>
+      {% endif %}
+    </div>
+  </body>
+</html>
